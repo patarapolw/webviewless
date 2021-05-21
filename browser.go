@@ -26,8 +26,8 @@ func LocateBrowser(preference string) BrowserProtocol {
 		p = LocateChrome()
 	case "edge":
 		p = LocateEdge()
-	case "firefox":
-		p = LocateFirefox()
+	// case "firefox":
+	// 	p = LocateFirefox()
 	default:
 		switch runtime.GOOS {
 		case "darwin":
@@ -43,9 +43,9 @@ func LocateBrowser(preference string) BrowserProtocol {
 		p = LocateChrome()
 	}
 
-	if p.Path == "" {
-		p = LocateFirefox()
-	}
+	// if p.Path == "" {
+	// 	p = LocateFirefox()
+	// }
 
 	return p
 }

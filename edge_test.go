@@ -26,10 +26,10 @@ func TestLocateEdge(t *testing.T) {
 func TestEdgeAppMode(t *testing.T) {
 	loc := LocateEdge()
 	cfg := ConnectorConfig{
-		Width:       300,
-		Height:      200,
-		Port:        9222,
-		IsMaximized: true,
+		Width:  300,
+		Height: 200,
+		Port:   9222,
+		// IsMaximized: true,
 	}
 
 	c := *loc.Connector

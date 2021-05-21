@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestLocateUniversal(t *testing.T) {
+func TestLocateBrowser(t *testing.T) {
 	switch runtime.GOOS {
 	case "windows":
 		loc := LocateBrowser("")
