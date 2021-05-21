@@ -18,14 +18,16 @@ type BrowserProtocol struct {
 }
 
 // LocateBrowser returns a path to OS specific browser binary
-func LocateBrowser(preference string) BrowserProtocol {
+func LocateBrowser(preferredBrowser string) BrowserProtocol {
 	p := BrowserProtocol{}
 
-	switch preference {
+	switch preferredBrowser {
 	case "chrome":
 		p = LocateChrome()
 	case "edge":
 		p = LocateEdge()
+	case "brave":
+		p = LocateBrave()
 	// case "firefox":
 	// 	p = LocateFirefox()
 	default:
@@ -41,6 +43,14 @@ func LocateBrowser(preference string) BrowserProtocol {
 
 	if p.Path == "" {
 		p = LocateChrome()
+	}
+
+	if p.Path == "" {
+		p = LocateBrave()
+	}
+
+	if p.Path == "" {
+		p = LocateEdge()
 	}
 
 	// if p.Path == "" {

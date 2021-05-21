@@ -55,23 +55,26 @@ type WebviewConfig struct {
 	IsMaximized      bool
 	Debug            bool
 	PreferredBrowser string
+	Native           bool
 }
 
 // LaunchWebview launch default webview, is blocking
 // and must be run on first thread in macOS
 func LaunchWebview(url string, config WebviewConfig, onDestroy func()) {
-	loc := LocateBrowser(config.PreferredBrowser)
-	if loc.Path != "" {
-		cfg := ConnectorConfig{
-			Width:       config.Width,
-			Height:      config.Height,
-			IsMaximized: config.IsMaximized,
-		}
+	if !config.Native {
+		loc := LocateBrowser(config.PreferredBrowser)
+		if loc.Path != "" {
+			cfg := ConnectorConfig{
+				Width:       config.Width,
+				Height:      config.Height,
+				IsMaximized: config.IsMaximized,
+			}
 
-		c := *loc.Connector
-		<-c.Connect(url, &cfg)
-		<-c.OnDisconnect(onDestroy, &cfg)
-		return
+			c := *loc.Connector
+			<-c.Connect(url, &cfg)
+			<-c.OnDisconnect(onDestroy, &cfg)
+			return
+		}
 	}
 
 	w := webview.New(config.Debug)

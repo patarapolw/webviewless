@@ -10,28 +10,23 @@ import (
 	"time"
 )
 
-// LocateEdge returns a path to Microsoft Edge binary
-// TODO: Update if MS Edge is installable on non-Windows.
-func LocateEdge() BrowserProtocol {
+// LocateChrome returns a path to Google Chrome binary
+func LocateBrave() BrowserProtocol {
 	var paths []string
 	switch runtime.GOOS {
 	case "darwin":
 		paths = []string{
 			// TODO: check on macOS
-			"/usr/bin/microsoft-edge",
-			"/usr/bin/microsoft-edge-beta",
-			"/usr/bin/microsoft-edge-dev",
+			"/usr/bin/brave",
 		}
 	case "windows":
 		paths = []string{
-			os.Getenv("ProgramFiles") + "/Microsoft/Edge/Application/msedge.exe",
-			os.Getenv("ProgramFiles(x86)") + "/Microsoft/Edge/Application/msedge.exe",
+			// TODO: check on Windows
 		}
 	default:
 		paths = []string{
-			"/usr/bin/microsoft-edge",
-			"/usr/bin/microsoft-edge-beta",
-			"/usr/bin/microsoft-edge-dev",
+			"/usr/bin/brave",
+			"/snap/bin/brave",
 		}
 	}
 
@@ -40,29 +35,30 @@ func LocateEdge() BrowserProtocol {
 			continue
 		}
 
-		var c Connector = ChromeConnector{
+		var c Connector = BraveConnector{
 			Path: path,
 		}
 
 		return BrowserProtocol{
 			Path:      path,
-			Type:      "edge",
+			Type:      "brave",
 			Connector: &c,
 		}
 	}
+
 	return BrowserProtocol{}
 }
 
-// EdgeConnector connector for Microsoft Edge
-type EdgeConnector struct {
+// BraveConnector connector for Brave browser
+type BraveConnector struct {
 	Path string
 }
 
-func (c EdgeConnector) Type() string {
-	return "edge"
+func (c BraveConnector) Type() string {
+	return "brave"
 }
 
-func (c EdgeConnector) Connect(url string, config *ConnectorConfig) chan bool {
+func (c BraveConnector) Connect(url string, config *ConnectorConfig) chan bool {
 	if config.Port == 0 {
 		config.Port = FindRandomPort()
 	}
@@ -84,7 +80,7 @@ func (c EdgeConnector) Connect(url string, config *ConnectorConfig) chan bool {
 
 	args := []string{}
 	if url != "" {
-		args = append(args, "--app", url)
+		args = append(args, "--app="+url)
 	}
 	args = append(args, "--remote-debugging-port="+strconv.Itoa(config.Port))
 
@@ -109,7 +105,7 @@ func (c EdgeConnector) Connect(url string, config *ConnectorConfig) chan bool {
 	return out
 }
 
-func (EdgeConnector) OnDisconnect(cb func(), config *ConnectorConfig) chan bool {
+func (BraveConnector) OnDisconnect(cb func(), config *ConnectorConfig) chan bool {
 	if config.Port == 0 {
 		panic("Cannot wait for port 0")
 	}
